@@ -1,20 +1,325 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>NerpaCad — скоро</title>
-  <style>
-    body { margin: 0; min-height: 100vh; display: grid; place-items: center;
-           font-family: system-ui, sans-serif; background: #12263A; color: #F5F2EB; text-align: center; }
-    p { color: #C3D3DF; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NerpaCad — 3D-моделирование и робототехника для детей</title>
+<meta name="description" content="NerpaCad — бесплатная программа для детей: 3D-моделирование деталей для печати, эскизы, симулятор робототехники с блочным программированием и схемотехника.">
+<meta property="og:title" content="NerpaCad — 3D-моделирование и робототехника для детей">
+<meta property="og:description" content="Придумай деталь, напечатай её и запрограммируй робота. Бесплатно, для Windows и Linux.">
+<meta property="og:image" content="https://nerpacad.ru/img/scene-day.webp">
+<meta property="og:url" content="https://nerpacad.ru/">
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+  :root {
+    --ink: #12263A;
+    --ink-soft: #44525E;
+    --muted: #6B7782;
+    --paper: #F7F5F0;
+    --card: #FFFFFF;
+    --line: #E1DDD3;
+    --teal: #24698A;
+    --teal-dark: #1B5470;
+    --sky: #E7EEF2;
+    --orange: #E8973A;
+    --orange-ink: #8A4E10;
+    --radius: 18px;
+    --shadow: 0 18px 50px rgba(18, 38, 58, .14);
+    --max: 1180px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { display: block; max-width: 100%; height: auto; }
+  a { color: var(--teal); }
+  .wrap { width: min(var(--max), 100% - 32px); margin-inline: auto; }
+
+  /* header */
+  header.top {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(247, 245, 240, .88);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); font-weight: 800; font-size: 20px; letter-spacing: -.01em; }
+  .brand img { width: 52px; }
+  nav.links { display: flex; gap: 22px; }
+  nav.links a { color: var(--ink-soft); text-decoration: none; font-weight: 600; font-size: 15px; }
+  nav.links a:hover { color: var(--teal); }
+
+  /* hero */
+  .hero { padding: 64px 0 40px; }
+  .hero-grid { display: grid; grid-template-columns: 1fr; gap: 40px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #FCEBD6; color: var(--orange-ink);
+    font-weight: 700; font-size: 14px; padding: 6px 14px; border-radius: 999px;
+  }
+  .badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--orange); }
+  h1 {
+    font-size: clamp(36px, 6vw, 68px); line-height: 1.04; letter-spacing: -.025em;
+    margin: 18px 0 18px; max-width: 14ch;
+  }
+  h1 em { font-style: normal; color: var(--teal); }
+  .lead { font-size: clamp(18px, 2vw, 21px); color: var(--ink-soft); max-width: 46ch; margin: 0 0 28px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 22px; border-radius: 12px; font-weight: 700; font-size: 16px;
+    text-decoration: none; border: 2px solid transparent; cursor: pointer;
+  }
+  .btn-primary { background: var(--ink); color: #fff; }
+  .btn-primary[aria-disabled="true"] { background: #2E4458; cursor: default; }
+  .btn-ghost { border-color: var(--ink); color: var(--ink); background: transparent; }
+  .btn-ghost:hover { background: var(--ink); color: #fff; }
+  .os { color: var(--muted); font-size: 14px; }
+
+  .shot {
+    border-radius: var(--radius); overflow: hidden; background: var(--card);
+    box-shadow: var(--shadow); border: 1px solid var(--line);
+  }
+  .shot .bar { display: flex; gap: 6px; padding: 10px 14px; background: #EDEAE3; border-bottom: 1px solid var(--line); }
+  .shot .bar i { width: 10px; height: 10px; border-radius: 50%; background: #CFC9BD; }
+
+  /* sections */
+  section { padding: 72px 0; }
+  .eyebrow { color: var(--teal); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; font-size: 13px; margin: 0 0 10px; }
+  h2 { font-size: clamp(28px, 3.6vw, 42px); line-height: 1.12; letter-spacing: -.02em; margin: 0 0 14px; }
+  .section-lead { color: var(--ink-soft); font-size: 18px; max-width: 60ch; margin: 0 0 40px; }
+
+  .feature { display: grid; grid-template-columns: 1fr; gap: 28px; align-items: center; padding: 28px 0; }
+  .feature + .feature { border-top: 1px solid var(--line); }
+  .feature h3 { font-size: 26px; margin: 0 0 10px; letter-spacing: -.01em; }
+  .feature p { color: var(--ink-soft); margin: 0 0 12px; font-size: 17px; }
+  .feature ul { margin: 0; padding-left: 20px; color: var(--ink-soft); }
+  .feature li { margin: 4px 0; }
+  .tag { display: inline-block; font-size: 13px; font-weight: 700; color: var(--teal-dark); background: var(--sky); padding: 4px 10px; border-radius: 8px; margin-bottom: 12px; }
+  .pair { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; align-items: end; }
+
+  /* pretty mode */
+  .pretty { background: var(--ink); color: #F5F2EB; }
+  .pretty .eyebrow { color: var(--orange); }
+  .pretty .section-lead { color: #C3D3DF; }
+  .tabs { display: inline-flex; background: rgba(255,255,255,.08); padding: 5px; border-radius: 12px; gap: 4px; margin-bottom: 22px; }
+  .tabs button {
+    font: inherit; font-weight: 700; color: #C3D3DF; background: transparent;
+    border: 0; padding: 10px 20px; border-radius: 9px; cursor: pointer;
+  }
+  .tabs button[aria-selected="true"] { background: #F5F2EB; color: var(--ink); }
+  .scene { border-radius: var(--radius); overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,.35); aspect-ratio: 1600 / 808; background: #0b1622; }
+  .scene img { width: 100%; height: 100%; object-fit: cover; }
+  .heroes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 36px; }
+  .hero-card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; padding: 18px 20px; }
+  .hero-card b { display: block; font-size: 18px; margin-bottom: 4px; }
+  .hero-card span { color: #C3D3DF; font-size: 15px; }
+
+  /* themes */
+  .themes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .themes figure { margin: 0; }
+  .themes figcaption { margin-top: 10px; font-weight: 700; font-size: 15px; color: var(--ink-soft); }
+
+  /* teachers */
+  .grid4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
+  .card h3 { margin: 0 0 6px; font-size: 19px; }
+  .card p { margin: 0; color: var(--ink-soft); font-size: 15.5px; }
+  .card .ico { width: 40px; height: 40px; border-radius: 10px; background: var(--sky); display: grid; place-items: center; margin-bottom: 14px; color: var(--teal); }
+
+  /* final */
+  .final { text-align: center; }
+  .final .wrap { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 56px 24px; }
+  .final h2 { max-width: 22ch; margin-inline: auto; }
+  .final p { color: var(--ink-soft); max-width: 52ch; margin: 0 auto 24px; font-size: 18px; }
+
+  footer { padding: 36px 0 48px; color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 24px; }
+
+  @media (min-width: 900px) {
+    .hero { padding: 88px 0 56px; }
+    .hero-grid { grid-template-columns: 5fr 7fr; align-items: center; gap: 56px; }
+    .feature { grid-template-columns: 5fr 7fr; gap: 56px; padding: 44px 0; }
+    .feature.flip > .text { order: 2; }
+  }
+  @media (max-width: 720px) {
+    nav.links { display: none; }
+    .themes { grid-template-columns: 1fr; }
+    .pair { grid-template-columns: 1fr; }
+    .tabs button { padding: 9px 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
 </head>
 <body>
-  <main>
-    <h1>NerpaCad</h1>
-    <p>Бесплатная система 3D-моделирования и робототехники для детей.</p>
-    <p>Скоро здесь появится первая версия.</p>
-  </main>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="NerpaCad — на главную"><img src="img/logo.png" alt="">NerpaCad</a>
+    <nav class="links" aria-label="Разделы">
+      <a href="#features">Возможности</a>
+      <a href="#pretty">Красивый режим</a>
+      <a href="#schools">Для школ</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="badge">Первая версия 0.2 скоро</span>
+        <h1>Придумай деталь. Напечатай. <em>Запрограммируй робота.</em></h1>
+        <p class="lead">NerpaCad — бесплатная программа для детей: 3D-моделирование, эскизы, симулятор робототехники и схемотехника в одном окне.</p>
+        <div class="cta">
+          <a class="btn btn-primary" aria-disabled="true" role="link">Скачать — скоро</a>
+          <a class="btn btn-ghost" href="#features">Что умеет</a>
+        </div>
+        <p class="os">Windows 10/11 и Linux · русский, English, 中文</p>
+      </div>
+      <div class="shot">
+        <div class="bar" aria-hidden="true"><i></i><i></i><i></i></div>
+        <img src="img/robotics.webp" width="1600" height="875" alt="Окно NerpaCad: трасса с рампами и водой и блочная программа робота, который едет по линии">
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="wrap">
+      <p class="eyebrow">Возможности</p>
+      <h2>Четыре мастерские в одной программе</h2>
+      <p class="section-lead">От первой детали до робота, который сам проходит трассу. Всё работает на обычном школьном компьютере и без интернета.</p>
+
+      <div class="feature">
+        <div class="text">
+          <span class="tag">3D-моделирование</span>
+          <h3>Детали для 3D-принтера</h3>
+          <p>Фигуры перетаскиваются на рабочую плоскость, у каждой есть ручки размера и поворота. Любую фигуру можно сделать отверстием и вычесть из другой.</p>
+          <ul>
+            <li>шестерёнки, винты и другие параметрические детали</li>
+            <li>точные размеры в миллиметрах</li>
+            <li>экспорт в STL и OBJ — прямо в слайсер</li>
+          </ul>
+        </div>
+        <div class="shot"><img src="img/parts.webp" width="1600" height="874" loading="lazy" alt="3D-сцена с коробкой, шестерёнкой, винтом и другими деталями для печати"></div>
+      </div>
+
+      <div class="feature flip">
+        <div class="text">
+          <span class="tag">Эскизы</span>
+          <h3>Нарисуй контур — получи тело</h3>
+          <p>Отрезки, дуги, сплайны и многоугольники с размерами. Контур можно выдавить в деталь или повернуть вокруг оси, как заготовку на токарном станке.</p>
+        </div>
+        <div class="pair">
+          <div class="shot"><img src="img/sketch.webp" width="1600" height="875" loading="lazy" alt="Эскиз с кривыми, шестиугольником и прямоугольником на сетке"></div>
+          <div class="shot"><img src="img/revolve.webp" width="1200" height="664" loading="lazy" alt="Тело, полученное вращением контура"></div>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div class="text">
+          <span class="tag">Робототехника</span>
+          <h3>Трасса, робот и программа из блоков</h3>
+          <p>Собери поле из травы, воды, дорог, рамп и мостов. Программируй робота блоками, как в Scratch: датчики линии, расстояния и касания, моторы, лампы и фонарики.</p>
+          <p>Деталь, нарисованную в 3D, можно одной кнопкой перенести на поле.</p>
+        </div>
+        <div class="shot"><img src="img/scene-day.webp" width="1600" height="808" loading="lazy" alt="Поле робототехники: трава, вода, рампы, мосты, деревья и фонари"></div>
+      </div>
+
+      <div class="feature flip">
+        <div class="text">
+          <span class="tag">Схемотехника</span>
+          <h3>Схема на макетной плате</h3>
+          <p>Собери схему с Arduino, датчиками и сервоприводом прямо в программе и посмотри, как она работает, ещё до пайки.</p>
+        </div>
+        <div class="shot"><img src="img/circuit.webp" width="1600" height="798" loading="lazy" alt="Схема: плата Arduino Uno, макетная плата, потенциометр и сервопривод"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pretty" id="pretty">
+    <div class="wrap">
+      <p class="eyebrow">Красивый режим</p>
+      <h2>День, вечер, ночь</h2>
+      <p class="section-lead">Тени, свечение фонарей, отражения в воде. На слабых компьютерах качество снижается само, чтобы картинка не тормозила.</p>
+      <div class="tabs" role="tablist" aria-label="Время суток">
+        <button role="tab" aria-selected="true" data-src="img/scene-day.webp" data-alt="Поле днём">День</button>
+        <button role="tab" aria-selected="false" data-src="img/scene-evening.webp" data-alt="Поле вечером, тёплый свет">Вечер</button>
+        <button role="tab" aria-selected="false" data-src="img/scene-night.webp" data-alt="Поле ночью, светятся фонари">Ночь</button>
+      </div>
+      <div class="scene"><img id="scene" src="img/scene-day.webp" width="1600" height="808" alt="Поле днём"></div>
+
+      <div class="heroes">
+        <div class="hero-card"><b>Нерпа</b><span>Ползает по суше и быстро плавает в воде.</span></div>
+        <div class="hero-card"><b>Гепард Читик</b><span>Бегает и запрыгивает на уступы, но в воду не пойдёт.</span></div>
+        <div class="hero-card"><b>Голубь Геннадий</b><span>Взлетает, летает над водой и садится на сушу.</span></div>
+        <div class="hero-card"><b>Робот</b><span>Едет по линии и видит мир только своими датчиками.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">Оформление</p>
+      <h2>Три темы под любой класс</h2>
+      <p class="section-lead">Светлая для проектора, тёмная для вечера, тёплая — чтобы глаза меньше уставали.</p>
+      <div class="themes">
+        <figure><div class="shot"><img src="img/theme-light.webp" width="800" height="437" loading="lazy" alt="Светлая тема"></div><figcaption>Светлая</figcaption></figure>
+        <figure><div class="shot"><img src="img/theme-dark.webp" width="800" height="436" loading="lazy" alt="Тёмная тема"></div><figcaption>Тёмная</figcaption></figure>
+        <figure><div class="shot"><img src="img/theme-warm.webp" width="800" height="437" loading="lazy" alt="Тёплая тема"></div><figcaption>Тёплая</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="schools">
+    <div class="wrap">
+      <p class="eyebrow">Для школ и кружков</p>
+      <h2>Сделано для урока</h2>
+      <p class="section-lead">Не нужны регистрация, аккаунты и облако — только установщик.</p>
+      <div class="grid4">
+        <div class="card"><div class="ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><h3>Бесплатно</h3><p>Без подписок, пробных периодов и рекламы.</p></div>
+        <div class="card"><div class="ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l22 22M16.7 11.1A10.9 10.9 0 0 1 19 12.5M5 12.5a10.9 10.9 0 0 1 5.2-2.9M10.7 5.1A16 16 0 0 1 22.6 9M1.4 9a16 16 0 0 1 4.4-2.8M8.5 16a5 5 0 0 1 7 0M12 20h.01"/></svg></div><h3>Без интернета</h3><p>Всё работает на компьютере, проекты хранятся в файлах.</p></div>
+        <div class="card"><div class="ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><h3>Windows и Linux</h3><p>Для школьных компьютеров есть режим низкого качества графики.</p></div>
+        <div class="card"><div class="ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></div><h3>Три языка</h3><p>Русский, английский и китайский интерфейс.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="wrap">
+      <h2>Первая публичная версия уже на подходе</h2>
+      <p>Скоро здесь появятся установщики для Windows и Linux. Программа бесплатная и останется такой.</p>
+      <a class="btn btn-ghost" href="#top">Наверх</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 NerpaCad</span>
+    <span>Модели героев — авторы указаны в окне «О программе»</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var img = document.getElementById('scene');
+    var tabs = document.querySelectorAll('.tabs button');
+    tabs.forEach(function (b) {
+      b.addEventListener('click', function () {
+        tabs.forEach(function (t) { t.setAttribute('aria-selected', t === b ? 'true' : 'false'); });
+        img.src = b.dataset.src;
+        img.alt = b.dataset.alt;
+      });
+    });
+    ['img/scene-evening.webp', 'img/scene-night.webp'].forEach(function (s) { var i = new Image(); i.src = s; });
+  })();
+</script>
 </body>
 </html>
